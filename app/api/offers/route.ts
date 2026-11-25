@@ -49,20 +49,20 @@ const CATEGORIES:Record<string,string[]> = {
  "Haircare":["shampoo","conditioner","hair cream"],
  "Personal care":["toothpaste","deodorant","body lotion","personal care"]
 };
-const clean = (v:unknown) => typeof v==="string" ? v.replace(/\\s+/g," ").trim() : "";
+const clean = (v:unknown) => typeof v==="string" ? v.replace(/\s+/g," ").trim() : "";
 function priceFrom(s:string):{value:number;currency:string}|null {
  const patterns:[RegExp,string][]=[
-  [/(?:GH₵|GHS|₵)\\s*([0-9][0-9,]*(?:\\.[0-9]{1,2})?)/i,"GHS"],
-  [/(?:₦|NGN)\\s*([0-9][0-9,]*(?:\\.[0-9]{1,2})?)/i,"NGN"],
-  [/(?:CFA|XOF|FCFA)\\s*([0-9][0-9,]*(?:\\.[0-9]{1,2})?)/i,"XOF"],
-  [/\\$\\s*([0-9][0-9,]*(?:\\.[0-9]{1,2})?)/,"USD"]
+  [/(?:GH₵|GHS|₵)\s*([0-9][0-9,]*(?:\.[0-9]{1,2})?)/i,"GHS"],
+  [/(?:₦|NGN)\s*([0-9][0-9,]*(?:\.[0-9]{1,2})?)/i,"NGN"],
+  [/(?:CFA|XOF|FCFA)\s*([0-9][0-9,]*(?:\.[0-9]{1,2})?)/i,"XOF"],
+  [/\$\s*([0-9][0-9,]*(?:\.[0-9]{1,2})?)/,"USD"]
  ];
- for(const [re,currency] of patterns){const m=s.replace(/\\u00a0/g," ").match(re);if(m)return {value:Number(m[1].replace(/,/g,"")),currency};}
+ for(const [re,currency] of patterns){const m=s.replace(/\u00a0/g," ").match(re);if(m)return {value:Number(m[1].replace(/,/g,"")),currency};}
  return null;
 }
-function brandFrom(name:string){return name.match(/\\b(Hisense|Samsung|LG|Nasco|Midea|TCL|Bruhm|Akai|Chigo|Sigma|Roch|Legacy|Haier|Bosch|Toshiba|Panasonic|Defy|Nexus|Apple|Tecno|Infinix|Itel|HP|Dell|Lenovo|Acer|Asus|Nike|Adidas|Puma)\\b/i)?.[0]||"Unspecified";}
+function brandFrom(name:string){return name.match(/\b(Hisense|Samsung|LG|Nasco|Midea|TCL|Bruhm|Akai|Chigo|Sigma|Roch|Legacy|Haier|Bosch|Toshiba|Panasonic|Defy|Nexus|Apple|Tecno|Infinix|Itel|HP|Dell|Lenovo|Acer|Asus|Nike|Adidas|Puma)\b/i)?.[0]||"Unspecified";}
 function productNodes(v:any):any[]{if(!v||typeof v!=="object")return[];if(Array.isArray(v))return v.flatMap(productNodes);const own=String(v["@type"]||"").toLowerCase().includes("product")?[v]:[];return own.concat(Object.values(v).flatMap(productNodes));}
-function isPromotion(text:string,old:number|null,now:number){return (old!==null&&old>now)||/sale|deal|promo|discount|special price|clearance|black friday|save\\s*\\d+|off\\s*\\d+%/i.test(text);}
+function isPromotion(text:string,old:number|null,now:number){return (old!==null&&old>now)||/sale|deal|promo|discount|special price|clearance|black friday|save\s*\d+|off\s*\d+%/i.test(text);}
 function parsePage(html:string,source:Source,subcategory:string,checkedAt:string):Offer[]{
  const $=cheerio.load(html);const words=CATEGORIES[subcategory]||[subcategory.toLowerCase()];const matches=(name:string)=>words.some(w=>name.toLowerCase().includes(w));
  const found:Offer[]=[];
