@@ -125,7 +125,8 @@ export async function GET(req:NextRequest){
  const country=req.nextUrl.searchParams.get("country")||"Ghana";
  const checkedAt=new Date().toISOString();
  if(!CATEGORIES[subcategory])return NextResponse.json({error:"Unsupported product category",offers:[],sources:[]},{status:400});
- const selected=SOURCES.filter(s=>s.country===country);\n if(!selected.length)return NextResponse.json({category:subcategory,country,checkedAt,offers:[],sources:[],total:0,message:"No retailers are configured for this country yet."});
+ const selected=SOURCES.filter(s=>s.country===country);
+ if(!selected.length)return NextResponse.json({category:subcategory,country,checkedAt,offers:[],sources:[],total:0,message:"No retailers are configured for this country yet."});
  const results=await Promise.all(selected.map(async source=>{const result=await collectSource(source,subcategory,checkedAt);return {source:source.name,status:result.status,count:result.offers.length,offers:result.offers};}));
  const offers=results.flatMap(r=>r.offers).filter((o,i,a)=>a.findIndex(x=>x.url===o.url)===i);
  return NextResponse.json({category:subcategory,country,checkedAt,offers,sources:results.map(({source,status,count})=>({source,status,count})),total:offers.length});
