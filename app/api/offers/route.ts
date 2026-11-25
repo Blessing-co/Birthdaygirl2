@@ -44,7 +44,7 @@ const CATEGORIES:Record<string,string[]> = {
  "Household supplies":["detergent","tissue","cleaner","soap"],
  "Car parts":["brake pad","filter","car battery","spark plug"],
  "Tyres":["tyre","tire"],
- "Automotive accessories":["car accessories","car charger","floor mat"],\n "Accessories":["charger","earbuds","headphones","phone case","cable","computer accessories"],
+ "Automotive accessories":["car accessories","car charger","floor mat"],
  "Skincare":["skin care","moisturizer","sunscreen","face cream"],
  "Haircare":["shampoo","conditioner","hair cream"],
  "Personal care":["toothpaste","deodorant","body lotion","personal care"]
