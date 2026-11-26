@@ -208,7 +208,21 @@ export async function GET(request: NextRequest) {
       message: "Promotion sources for this country have not been connected yet. Ghana is currently the only configured market."
     });
   }
-  const results = await Promise.all(selected.map(source => collectSource(source, subcategory, checkedAt)));
+  // Never let one unresponsive retailer keep the whole page loading.
+  const results = await Promise.all(selected.map(async source => {
+    try {
+      return await Promise.race([
+        collectSource(source, subcategory, checkedAt),
+        new Promise<{ source: string; status: string; count: number; offers: Offer[] }>(resolve =>
+          setTimeout(() => resolve({
+            source: source.name, status: "timeout_or_blocked", count: 0, offers: []
+          }), 9000)
+        )
+      ]);
+    } catch {
+      return { source: source.name, status: "timeout_or_blocked", count: 0, offers: [] };
+    }
+  }));
   const offers = results.flatMap(result => result.offers);
   return NextResponse.json({
     category: subcategory, country, checkedAt, offers, total: offers.length,
