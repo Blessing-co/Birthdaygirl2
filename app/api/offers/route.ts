@@ -62,6 +62,7 @@ function isPromotion(text: string, old: number | null, now: number) {
   return (old !== null && old > now) || /sale|deal|promo|discount|special price|clearance|black friday|save\s*\d+|off\s*\d+%/i.test(text);
 }
 function safeUrl(value: unknown, base: string) {
+  if (typeof value !== "string" || !value.trim()) return "";
   try {
     const url = new URL(typeof value === "string" ? value : "", base);
     return url.protocol === "https:" || url.protocol === "http:" ? url.toString() : "";
@@ -70,7 +71,7 @@ function safeUrl(value: unknown, base: string) {
 function productNodes(value: any): any[] {
   if (!value || typeof value !== "object") return [];
   if (Array.isArray(value)) return value.flatMap(productNodes);
-  const own = String(value["@type"] || "").toLowerCase().split(/\s+/).includes("product") ? [value] : [];
+  const own = String(value["@type"] || "").toLowerCase().includes("product") ? [value] : [];
   return own.concat(Object.values(value).flatMap(productNodes));
 }
 function parsePage(html: string, source: Source, subcategory: string, checkedAt: string): Offer[] {
@@ -94,12 +95,13 @@ function parsePage(html: string, source: Source, subcategory: string, checkedAt:
         const oldPrice = Number.isFinite(oldValue) && oldValue > now ? oldValue : null;
         const imageValue = Array.isArray(product.image) ? product.image[0] : product.image;
         const url = safeUrl(product.url || offerData?.url, source.url);
-        if (!url) continue;
+        const currency = clean(offerData?.priceCurrency).toUpperCase();
+        if (!url || !/^[A-Z]{3}$/.test(currency)) continue;
         add({
           id: source.name + "|" + url, name,
           brand: clean(product.brand?.name || product.brand) || brandFrom(name),
           merchant: source.name, country: source.country, oldPrice, newPrice: now,
-          currency: clean(offerData?.priceCurrency).toUpperCase(), discount: oldPrice ? Math.round((1 - now / oldPrice) * 100) : null,
+          currency, discount: oldPrice ? Math.round((1 - now / oldPrice) * 100) : null,
           image: safeUrl(typeof imageValue === "string" ? imageValue : imageValue?.url, source.url),
           url, checkedAt, sourceStatus: "Public structured product data"
         });
