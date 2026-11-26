@@ -5,8 +5,8 @@ type Offer = { id:string; name:string; brand:string; merchant:string; country:st
 type Source = { source:string; status:string; count:number };
 const categories = [
  {name:"Appliances",icon:"▣",subs:["Fridges","Freezers","Televisions","Washing machines","Air conditioners","Cookers"]},
- {name:"Phones & tablets",icon:"▯",subs:["Smartphones","Feature phones","Tablets","Accessories"]},
- {name:"Computers",icon:"⌘",subs:["Laptops","Desktops","Monitors","Accessories"]},
+ {name:"Phones & tablets",icon:"▯",subs:["Smartphones","Feature phones","Tablets","Phone accessories"]},
+ {name:"Computers",icon:"⌘",subs:["Laptops","Desktops","Monitors","Computer accessories"]},
  {name:"Fashion",icon:"◇",subs:["Men's clothing","Women's clothing","Shoes","Bags"]},
  {name:"Home & living",icon:"⌂",subs:["Furniture","Kitchenware","Bedding","Lighting"]},
  {name:"Groceries",icon:"＋",subs:["Food","Drinks","Household supplies"]},
