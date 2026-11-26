@@ -20,7 +20,11 @@ const SOURCES: Source[] = [
   { name: "MaxMart", url: "https://maxmartonline.com/", country: "Ghana" },
   { name: "Palace Superstores", url: "https://palacesuperstores.com/", country: "Ghana" },
   { name: "UNA Agencies", url: "https://www.unaagencies.com/", country: "Ghana" },
-  { name: "WiredWorld", url: "https://www.wiredworldgh.com/", country: "Ghana" }
+  { name: "WiredWorld", url: "https://www.wiredworldgh.com/", country: "Ghana" },
+  { name: "Intact Ghana", url: "https://www.intactghana.com/", country: "Ghana" },
+  { name: "Shopbeta", url: "https://shopbeta.com.gh/", country: "Ghana" },
+  { name: "Shopwice", url: "https://shopwice.com/", country: "Ghana" },
+  { name: "Mekades", url: "https://mekadesgh.com/", country: "Ghana" }
 ];
 const CATEGORIES: Record<string, string[]> = {
   "Fridges": ["fridge", "refrigerator"],
@@ -32,8 +36,9 @@ const CATEGORIES: Record<string, string[]> = {
   "Smartphones": ["smartphone", "mobile phone", "android phone", "iphone"],
   "Feature phones": ["feature phone", "keypad phone"],
   "Tablets": ["tablet", "ipad"],
-  "Accessories": ["charger", "earbuds", "headphones", "phone case", "cable"],
-  "Laptops": ["laptop", "notebook"],
+  "Phone accessories": ["phone charger", "charger", "earbuds", "headphones", "phone case", "phone cable"],
+  "Computer accessories": ["laptop charger", "computer mouse", "keyboard", "monitor", "usb hub", "webcam", "computer cable"],
+  "Laptops": ["laptop", "notebook", "macbook", "chromebook"],
   "Desktops": ["desktop computer", "desktop pc"],
   "Monitors": ["computer monitor", "monitor"],
   "Men's clothing": ["men shirt", "men trousers", "men clothing", "men jacket"],
@@ -59,7 +64,7 @@ function brandFrom(name: string) {
   return name.match(/\b(Hisense|Samsung|LG|Nasco|Midea|TCL|Bruhm|Akai|Chigo|Sigma|Roch|Legacy|Haier|Bosch|Toshiba|Panasonic|Defy|Nexus|Apple|Tecno|Infinix|Itel|HP|Dell|Lenovo|Acer|Asus|Nike|Adidas|Puma)\b/i)?.[0] || "Unspecified";
 }
 function isPromotion(text: string, old: number | null, now: number) {
-  return (old !== null && old > now) || /sale|deal|promo|discount|special price|clearance|black friday|save\s*\d+|off\s*\d+%/i.test(text);
+  return (old !== null && old > now) || /sale|deal|promo|discount|special price|clearance|black friday|save\s*(?:GH₵|GHS|₵|\$|₦)?\s*\d+|(?:off\s*\d+%|\d+%\s*off|-\s*\d+%)/i.test(text);
 }
 function safeUrl(value: unknown, base: string) {
   if (typeof value !== "string" || !value.trim()) return "";
@@ -239,7 +244,7 @@ export async function GET(request: NextRequest) {
         new Promise<{ source: string; status: string; count: number; offers: Offer[] }>(resolve =>
           setTimeout(() => resolve({
             source: source.name, status: "timeout_or_blocked", count: 0, offers: []
-          }), 9000)
+          }), 12000)
         )
       ]);
     } catch {
