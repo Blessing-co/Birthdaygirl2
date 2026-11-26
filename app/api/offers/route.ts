@@ -129,12 +129,12 @@ function parsePage(html: string, source: Source, subcategory: string, checkedAt:
   };
   $("li.product,.product-item,.product-card,.product,[data-product-id],article,[data-qa*=product]").each((_, element) => {
     const card = $(element);
-    const name = clean(card.find("h2,h3,h4,.product-name,.product-title,[class*=name],[data-qa*=name]").first().text() || card.find("a").first().attr("title") || card.find("a").first().text());
+    const name = clean(card.find("h2,h3,h4,.product-name,.product-title,.product-card-title,.product-card__title,.pname,[class*=name],[data-qa*=name]").first().text() || card.find("a").first().attr("title") || card.find("a").first().text());
     if (!name || !matches(name)) return;
     const allText = clean(card.text());
-    const current = priceFrom(card.find(".special-price,.price,.woocommerce-Price-amount,[class*=price]").first().text() || allText);
+    const current = priceFrom(card.find(".price-item--sale,.price__sale,.sale-price,.deal-price,.special-price,.woocommerce-Price-amount,[class*=sale-price],[class*=price]").first().text() || allText);
     if (!current || current.value <= 0) return;
-    const previous = priceFrom(card.find("del,.old-price,.regular-price,[class*=old-price],[class*=regular]").text());
+    const previous = priceFrom(card.find(".price-item--regular,.price__regular,del,s,[class*=compare-at],[class*=old-price],[class*=regular-price]").text());
     const oldPrice = previous && previous.value > current.value && previous.currency === current.currency ? previous.value : null;
     if (!isPromotion(allText, oldPrice, current.value)) return;
     const href = safeUrl(card.find("a[href]").first().attr("href"), source.url);
